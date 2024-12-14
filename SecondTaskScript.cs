@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
+using System.Threading.Tasks;
 
 public class SecondTaskScript : MonoBehaviour
 {
@@ -45,6 +47,9 @@ public class SecondTaskScript : MonoBehaviour
             firstLaunch = false;
             RunnersMet();
         }
+        //if (currentRunner < 0 || currentRunner >= runners.Length || runners[currentRunner] == null) return;
+
+
 
         runners[currentRunner].transform.position = Vector3.MoveTowards(runners[currentRunner].transform.position, target, Time.deltaTime * Speed);
         if (Mathf.Abs(Vector3.Distance(runners[currentRunner].transform.position, target)) <= PassDistance) RunnersMet();
@@ -54,17 +59,28 @@ public class SecondTaskScript : MonoBehaviour
     {
         currentRunner++;
 
-        if (currentRunner == runners.Length) currentRunner = 0;
+        if (currentRunner >= runners.Length) currentRunner = 0;
 
         target = new Vector3(runners[currentRunner].transform.position.x + distanceBetweenRunners, 0, 0);
 
-        Debug.Log($"Наблюдаем за бегуном по имени {runners[currentRunner].name}");
-        cameraScript.PickObjectToFollow(runners[currentRunner]);
+        if (currentRunner < runners.Length && runners[currentRunner] != null)
+        {
+            target = new Vector3(runners[currentRunner].transform.position.x + distanceBetweenRunners, 0, 0);
+            Debug.Log($"Наблюдаем за бегуном  {runners[currentRunner].name}");
+            cameraScript.PickObjectToFollow(runners[currentRunner]);
+        }
     }
 
     public void ChangeActiveTask(bool status)
     {
         activeTask = status;
-        if (activeTask == false) firstLaunch = true;
+        firstLaunch = true;
+        currentRunner = -1;
+        for (int i = 0; i < AmountOfRunners; i++)
+        {
+            runners[i].transform.position = new Vector3(i * distanceBetweenRunners, -10, 0);
+        }
     }
+
+
 }

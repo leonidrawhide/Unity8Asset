@@ -30,17 +30,16 @@ public class ButtonsScript : MonoBehaviour
     void Start()
     {
         cameraScript = Camera.GetComponent<CameraScript>();
+        cameraScript.PickObjectToFollow(CameraReturnObject);
         firstTaskSphere = FirstTaskObjects.transform.Find("FirstTaskSphere").gameObject;
         firstTaskScript = firstTaskSphere.GetComponent<FirstTaskScript>();
         secondTaskScript = SecondTaskObjects.GetComponent<SecondTaskScript>();
-        ShowTask(0);
     }
 
     void Update()
     {
         if (upperTask == 1)
         {
-            secondTaskScript.ChangeActiveTask(false);
             SecondTaskObjects.transform.position = Vector3.MoveTowards(SecondTaskObjects.transform.position, targetLowerPosition, Time.deltaTime * Speed);
             ThirdTaskObjects.transform.position = Vector3.MoveTowards(ThirdTaskObjects.transform.position, targetLowerPosition, Time.deltaTime * Speed);
 
@@ -60,7 +59,6 @@ public class ButtonsScript : MonoBehaviour
         }
         else if (upperTask == 2)
         {
-            firstTaskScript.ChangeActiveTask(false);
             FirstTaskObjects.transform.position = Vector3.MoveTowards(FirstTaskObjects.transform.position, targetLowerPosition, Time.deltaTime * Speed);
             ThirdTaskObjects.transform.position = Vector3.MoveTowards(ThirdTaskObjects.transform.position, targetLowerPosition, Time.deltaTime * Speed);
 
@@ -91,7 +89,9 @@ public class ButtonsScript : MonoBehaviour
 
     public void ShowTask(int taskNum)
     {
-        upperTask = taskNum;
+        firstTaskScript.ChangeActiveTask(false);
+        secondTaskScript.ChangeActiveTask(false);
         cameraScript.PickObjectToFollow(CameraReturnObject);
+        Task.Delay(new TimeSpan(0, 0, 0, 0, 500)).ContinueWith(o => { upperTask = taskNum; });
     }
 }
