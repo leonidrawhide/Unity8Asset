@@ -78,7 +78,6 @@ public class ThirdTaskScript : MonoBehaviour
 
         if (currentRunner >= humanRunners.Length) currentRunner = 0;
         //humanRunners[currentRunner].GetComponent<Animator>().SetBool("Pickup", true);
-        
 
         target = new Vector3(humanRunners[currentRunner].transform.position.x + distanceBetweenRunners, 0, 0);
 
@@ -95,7 +94,6 @@ public class ThirdTaskScript : MonoBehaviour
             Debug.Log($"Наблюдаем за бегуном {humanRunners[currentRunner].name}");
             cameraScript.PickObjectToFollow(humanRunners[currentRunner]);
         }
-
     }
 
     public void ChangeActiveTask(bool status)
