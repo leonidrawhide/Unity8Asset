@@ -47,9 +47,6 @@ public class SecondTaskScript : MonoBehaviour
             firstLaunch = false;
             RunnersMet();
         }
-        //if (currentRunner < 0 || currentRunner >= runners.Length || runners[currentRunner] == null) return;
-
-
 
         runners[currentRunner].transform.position = Vector3.MoveTowards(runners[currentRunner].transform.position, target, Time.deltaTime * Speed);
         if (Mathf.Abs(Vector3.Distance(runners[currentRunner].transform.position, target)) <= PassDistance) RunnersMet();
@@ -81,6 +78,4 @@ public class SecondTaskScript : MonoBehaviour
             runners[i].transform.position = new Vector3(i * distanceBetweenRunners, -10, 0);
         }
     }
-
-
 }
