@@ -26,14 +26,17 @@ public class ButtonsScript : MonoBehaviour
     private GameObject firstTaskSphere;
     private FirstTaskScript firstTaskScript;
     private SecondTaskScript secondTaskScript;
+    private ThirdTaskScript thirdTaskScript;
 
     void Start()
     {
         cameraScript = Camera.GetComponent<CameraScript>();
         cameraScript.PickObjectToFollow(CameraReturnObject);
         firstTaskSphere = FirstTaskObjects.transform.Find("FirstTaskSphere").gameObject;
+
         firstTaskScript = firstTaskSphere.GetComponent<FirstTaskScript>();
         secondTaskScript = SecondTaskObjects.GetComponent<SecondTaskScript>();
+        thirdTaskScript = ThirdTaskObjects.GetComponent<ThirdTaskScript>();
     }
 
     void Update()
@@ -79,7 +82,7 @@ public class ButtonsScript : MonoBehaviour
             {
                 ThirdTaskObjects.transform.position = Vector3.MoveTowards(ThirdTaskObjects.transform.position, targetUpperPosition, Time.deltaTime * Speed);
                 if (ThirdTaskObjects.transform.position == targetUpperPosition) {
-                    // call script here
+                    Task.Delay(new TimeSpan(0, 0, 0, 0, 500)).ContinueWith(o => { thirdTaskScript.ChangeActiveTask(true); });
                     cameraScript.PickObjectToFollow(firstTaskSphere);
                     upperTask = 0;
                 }
@@ -91,6 +94,7 @@ public class ButtonsScript : MonoBehaviour
     {
         firstTaskScript.ChangeActiveTask(false);
         secondTaskScript.ChangeActiveTask(false);
+        thirdTaskScript.ChangeActiveTask(false);
         cameraScript.PickObjectToFollow(CameraReturnObject);
         Task.Delay(new TimeSpan(0, 0, 0, 0, 500)).ContinueWith(o => { upperTask = taskNum; });
     }
