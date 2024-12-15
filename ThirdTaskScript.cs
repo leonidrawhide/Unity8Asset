@@ -1,6 +1,8 @@
 using System;
-using Palmmedia.ReportGenerator.Core.Common;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 using System.Threading.Tasks;
 
 public class ThirdTaskScript : MonoBehaviour
@@ -11,30 +13,82 @@ public class ThirdTaskScript : MonoBehaviour
     public float PassDistance;
 
     public GameObject Camera;
-    public GameObject CharacterPrefab;
+    public Material RedMaterial;
+    public Material BlueMaterial;
 
-    private GameObject[] humanRunners;
+    private GameObject[] runners;
     private CameraScript cameraScript;
 
     private int currentRunner = -1;
     private bool activeTask = false;
     private bool firstLaunch = true;
     private Vector3 target;
-    private Animator currAnimator;
-    private bool isRunnerStopped = false;
+    private float maxRotation = 45f;
+    private int multiplier = 1;
+    
 
     void Start()
     {
         cameraScript = Camera.GetComponent<CameraScript>();
 
-        humanRunners = new GameObject[AmountOfRunners];
+        runners = new GameObject[AmountOfRunners];
 
-        for (int i = 0; i < humanRunners.Length; i++) {
-            humanRunners[i] = Instantiate(CharacterPrefab, transform);
-            humanRunners[i].transform.parent = transform;
-            humanRunners[i].name = $"Runner{i + 1}";
-            humanRunners[i].transform.position = new Vector3(i * distanceBetweenRunners, -10, 0);
-            //runners[i].GetComponentInChildren<Renderer>().sharedMaterial = i % 2 == 0 ? RedMaterial : BlueMaterial;
+        for (int i = 0; i < runners.Length; i++)
+        {
+            GameObject runnnerModel = new GameObject();
+            GameObject body = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject leftLeg = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject rightLeg = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject rightHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject leftHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject head = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+            GameObject leftLegPivot = new GameObject();
+            GameObject rightLegPivot = new GameObject();
+
+            body.transform.parent = runnnerModel.transform;
+            leftLeg.transform.parent = runnnerModel.transform;
+            rightLeg.transform.parent = runnnerModel.transform;
+            rightHand.transform.parent = runnnerModel.transform;
+            leftHand.transform.parent = runnnerModel.transform;
+            head.transform.parent = runnnerModel.transform;
+
+            leftLegPivot.transform.parent = runnnerModel.transform;
+            rightLegPivot.transform.parent = runnnerModel.transform;
+
+            leftLeg.transform.name = "leftLeg";
+            rightLeg.transform.name = "rightLeg";
+            rightHand.transform.name = "rightHand";
+            leftHand.transform.name = "leftHand";
+            head.transform.name = "head";
+
+            leftLegPivot.transform.name = "leftLegPivot";
+            rightLegPivot.transform.name = "rightLegPivot";
+
+            body.transform.position = new Vector3(0f, 1f, 0f);
+            leftLeg.transform.position = new Vector3(0f, 0f, -0.23f);
+            rightLeg.transform.position = new Vector3(0f, 0f, 0.31f);
+            rightHand.transform.position = new Vector3(0f, 1f, -0.6f);
+            leftHand.transform.position = new Vector3(0f, 1f, 0.6f);
+            head.transform.position = new Vector3(0f, 1.8f, 0f);
+
+            leftLegPivot.transform.position = new Vector3(0f, 0.5f, -0.31f);
+            rightLegPivot.transform.position = new Vector3(0f, 0.5f, 0.31f);
+
+            body.transform.transform.localScale = new Vector3(0.4f, 1f, 1f);
+            leftLeg.transform.transform.localScale = new Vector3(0.25f, 1f, 0.25f);
+            rightLeg.transform.transform.localScale = new Vector3(0.25f, 1f, 0.25f);
+            rightHand.transform.transform.localScale = new Vector3(0.25f, 1f, 0.25f);
+            leftHand.transform.transform.localScale = new Vector3(0.25f, 1f, 0.25f);
+            head.transform.transform.localScale = new Vector3(0.55f, 0.58f, 0.45f);
+
+            body.GetComponentInChildren<Renderer>().sharedMaterial = i % 2 == 0 ? RedMaterial : BlueMaterial;
+            
+            runners[i] = runnnerModel;
+
+            runners[i].transform.parent = transform;
+            runners[i].name = $"Runner{i + 1}";
+            runners[i].transform.position = new Vector3(i * distanceBetweenRunners, -10, 0);
         }
     }
 
@@ -47,52 +101,37 @@ public class ThirdTaskScript : MonoBehaviour
             RunnersMet();
         }
 
-        humanRunners[currentRunner].transform.position = Vector3.MoveTowards(humanRunners[currentRunner].transform.position, target, Time.deltaTime * Speed);
+        runners[currentRunner].transform.position = Vector3.MoveTowards(runners[currentRunner].transform.position, target, Time.deltaTime * Speed);
 
-        if (Mathf.Abs(Vector3.Distance(humanRunners[currentRunner].transform.position, target)) <= PassDistance) RunnersMet();
-        else
-        {
-            currAnimator = humanRunners[currentRunner].GetComponent<Animator>();
-            if (currAnimator) currAnimator.SetFloat("MoveSpeed", Speed);
-        }
+        if (Mathf.Abs(Vector3.Distance(runners[currentRunner].transform.position, target)) <= PassDistance) RunnersMet();
+
+        runners[currentRunner].transform.GetChild(1).gameObject.transform.RotateAround(runners[currentRunner].transform.GetChild(6).gameObject.transform.position, new Vector3(0, 0, 1), multiplier * Speed * Time.deltaTime * 30);
+        runners[currentRunner].transform.GetChild(2).gameObject.transform.RotateAround(runners[currentRunner].transform.GetChild(7).gameObject.transform.position, new Vector3(0, 0, 1), -1 * multiplier * Speed * Time.deltaTime * 30);
+
+        if (runners[currentRunner].transform.GetChild(1).gameObject.transform.rotation.z >= 0.35) multiplier = -1;
+        if (runners[currentRunner].transform.GetChild(1).gameObject.transform.rotation.z <= -0.35) multiplier = 1;
+
     }
 
     void RunnersMet()
     {
-        //isRunnerStopped = true;
-        //if (currentRunner >= 0)
-        //{
-        //    currAnimator.SetFloat("MoveSpeed", 1f);
-        //    currAnimator.SetBool("Pickup", true);
-
-        //}
-        //Task.Delay(new TimeSpan(0, 0, 0, 0, 1000)).ContinueWith(o => {
-        isRunnerStopped = false;
-        activeTask = false;
         if (currentRunner >= 0) {
-            currAnimator.SetFloat("MoveSpeed", 0f);
-            if (currentRunner < AmountOfRunners - 2) humanRunners[currentRunner + 1].transform.LookAt(humanRunners[currentRunner].transform);
-            currAnimator.SetBool("Pickup", true);
+            runners[currentRunner].transform.GetChild(1).gameObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 1));
+            runners[currentRunner].transform.GetChild(1).gameObject.transform.localPosition = new Vector3(0f, 0f, -0.23f);
+            runners[currentRunner].transform.GetChild(2).gameObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 1));
+            runners[currentRunner].transform.GetChild(2).gameObject.transform.localPosition = new Vector3(0f, 0f, 0.31f);
         }
-        currentRunner++;      
 
-        if (currentRunner >= humanRunners.Length) currentRunner = 0;
-        //humanRunners[currentRunner].GetComponent<Animator>().SetBool("Pickup", true);
+        currentRunner++;
 
-        target = new Vector3(humanRunners[currentRunner].transform.position.x + distanceBetweenRunners, 0, 0);
+        if (currentRunner >= runners.Length) currentRunner = 0;
 
-        Task.Delay(new TimeSpan(0, 0, 0, 0, 2000)).ContinueWith(o => {
-            humanRunners[currentRunner].transform.LookAt(target);
-            activeTask = true;
-        });
+        target = new Vector3(runners[currentRunner].transform.position.x + distanceBetweenRunners, 0, 0);
 
-        humanRunners[currentRunner].transform.LookAt(target);
-
-        if (currentRunner < humanRunners.Length && humanRunners[currentRunner] != null)
-        {
-            target = new Vector3(humanRunners[currentRunner].transform.position.x + distanceBetweenRunners, 0, 0);
-            Debug.Log($"Наблюдаем за бегуном {humanRunners[currentRunner].name}");
-            cameraScript.PickObjectToFollow(humanRunners[currentRunner]);
+        if (currentRunner < runners.Length && runners[currentRunner] != null) {
+            target = new Vector3(runners[currentRunner].transform.position.x + distanceBetweenRunners, 0, 0);
+            Debug.Log($"Наблюдаем за бегуном  {runners[currentRunner].name}");
+            cameraScript.PickObjectToFollow(runners[currentRunner]);
         }
     }
 
@@ -101,12 +140,9 @@ public class ThirdTaskScript : MonoBehaviour
         activeTask = status;
         firstLaunch = true;
         currentRunner = -1;
-        if (status) {
-            for (int i = 0; i < AmountOfRunners; i++)
-            {
-                humanRunners[i].transform.position = new Vector3(i * distanceBetweenRunners, -10, 0);
-            }
+        for (int i = 0; i < AmountOfRunners; i++)
+        {
+            runners[i].transform.position = new Vector3(i * distanceBetweenRunners, -10, 0);
         }
-        
     }
 }
