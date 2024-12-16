@@ -55,6 +55,7 @@ public class ButtonsScript : MonoBehaviour
                         firstTaskScript.ChangeActiveTask(true);
                         cameraScript.PickObjectToFollow(firstTaskSphere);
                     });
+                    upperTask = 0;
                 }
             }
 
@@ -69,6 +70,7 @@ public class ButtonsScript : MonoBehaviour
                 SecondTaskObjects.transform.position = Vector3.MoveTowards(SecondTaskObjects.transform.position, targetUpperPosition, Time.deltaTime * Speed);
                 if (SecondTaskObjects.transform.position == targetUpperPosition) {
                     Task.Delay(new TimeSpan(0, 0, 0, 0, 500)).ContinueWith(o => { secondTaskScript.ChangeActiveTask(true); });
+                    upperTask = 0;
                 }
             }
         }
@@ -81,10 +83,10 @@ public class ButtonsScript : MonoBehaviour
                 ThirdTaskObjects.transform.position = Vector3.MoveTowards(ThirdTaskObjects.transform.position, targetUpperPosition, Time.deltaTime * Speed);
                 if (ThirdTaskObjects.transform.position == targetUpperPosition) {
                     Task.Delay(new TimeSpan(0, 0, 0, 0, 500)).ContinueWith(o => { thirdTaskScript.ChangeActiveTask(true); });
+                    upperTask = 0;
                 }
             }
         }
-        if (upperTask != 0) upperTask = 0;
     }
 
     public void ShowTask(int taskNum)

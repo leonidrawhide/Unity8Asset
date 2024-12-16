@@ -8,8 +8,10 @@ public class ThirdTaskScript : MonoBehaviour
     public float PassDistance;
 
     public GameObject Camera;
+
     public Material RedMaterial;
     public Material BlueMaterial;
+    public Material GreenMaterial;
 
     private GameObject[] runners;
     private GameObject stick;
@@ -57,7 +59,7 @@ public class ThirdTaskScript : MonoBehaviour
                 stick.transform.position = new Vector3(0f, -0.4f, 0f);
                 stick.transform.Rotate(Vector3.forward, 90);
                 stick.transform.transform.localScale = new Vector3(0.25f, 2f, 0.8f);
-                stick.GetComponentInChildren<Renderer>().sharedMaterial = RedMaterial;
+                stick.GetComponentInChildren<Renderer>().sharedMaterial = GreenMaterial;
             }
 
             rightHandPivot.transform.parent = runnnerModel.transform;
@@ -162,6 +164,7 @@ public class ThirdTaskScript : MonoBehaviour
             runners[0].transform.GetChild(3).gameObject.transform.GetChild(0).transform.rotation = Quaternion.Euler(0f, 0f, 90f);
             runners[0].transform.GetChild(3).gameObject.transform.GetChild(0).transform.transform.localScale = new Vector3(0.25f, 2f, 0.8f);
             currentRunner = 0;
+            Debug.Log($"Перевключаемся на первого бегуна");
         }
         else stickPassingCycle = 2;
 

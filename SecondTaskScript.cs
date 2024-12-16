@@ -51,7 +51,10 @@ public class SecondTaskScript : MonoBehaviour
     {
         currentRunner++;
 
-        if (currentRunner >= runners.Length) currentRunner = 0;
+        if (currentRunner >= runners.Length) { 
+            currentRunner = 0;
+            Debug.Log($"Перевключаемся на первого бегуна");
+        }
 
         target = new Vector3(runners[currentRunner].transform.position.x + distanceBetweenRunners, 0, 0);
 
