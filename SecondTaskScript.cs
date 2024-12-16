@@ -1,9 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
-using System.Threading.Tasks;
 
 public class SecondTaskScript : MonoBehaviour
 {
@@ -34,7 +29,7 @@ public class SecondTaskScript : MonoBehaviour
             runners[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             runners[i].transform.parent = transform;
             runners[i].name = $"Runner{i + 1}";
-            runners[i].transform.position = new Vector3(i * distanceBetweenRunners, -10, 0);
+            runners[i].transform.localPosition = new Vector3(i * distanceBetweenRunners, 0, 0);
             runners[i].GetComponentInChildren<Renderer>().sharedMaterial = i % 2 == 0 ? RedMaterial : BlueMaterial;
         }
     }
@@ -75,7 +70,7 @@ public class SecondTaskScript : MonoBehaviour
         currentRunner = -1;
         for (int i = 0; i < AmountOfRunners; i++)
         {
-            runners[i].transform.position = new Vector3(i * distanceBetweenRunners, -10, 0);
+            runners[i].transform.localPosition = new Vector3(i * distanceBetweenRunners, 0, 0);
         }
     }
 }
